@@ -2,6 +2,7 @@ from django.contrib.auth.base_user import BaseUserManager
 
 
 class UserManager(BaseUserManager):
+    #   oddiy user
     def create_user(self, email, password=None):
         if not email:
             raise ValueError("email kiritilishi shart")
@@ -12,11 +13,14 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
     
+    #   super user
     def create_superuser(self, email, password):
         user = self.create_user(
             email=self.normalize_email(email),
             password=password
         )
+        user.set_password(password)
+
         user.is_admin=True
         user.is_staff=True
         user.is_superuser=True
