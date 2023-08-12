@@ -2,6 +2,8 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 
+from .manager import UserManager
+
 
 class BaseModel(models.Model):
     id = models.UUIDField(unique=True, default=uuid.uuid4, editable=False, primary_key=True)
@@ -37,7 +39,7 @@ class User(BaseModel ,AbstractBaseUser):
     last_name = models.CharField(max_length=25)
     email = models.EmailField(unique=True)
     address = models.CharField(max_length=25, choices=UserAddress.choices, default=UserAddress.TASHKENT)
-    auth_step = models.CharField(max_length=25, choices=AuthStep.FIRST_STEP)
+    auth_step = models.CharField(max_length=25, choices=AuthStep.choices, default=AuthStep.FIRST_STEP)
     password = models.CharField(max_length=50)
     confirm_password = models.CharField(max_length=50)
 
@@ -46,3 +48,8 @@ class User(BaseModel ,AbstractBaseUser):
     
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+    
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
