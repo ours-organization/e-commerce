@@ -24,7 +24,7 @@ class User(BaseModel ,AbstractBaseUser):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['password']
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.full_name()
