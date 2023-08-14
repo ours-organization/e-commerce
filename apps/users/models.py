@@ -1,3 +1,6 @@
+import random
+import datetime
+
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser
 
@@ -5,7 +8,7 @@ from .manager import UserManager
 from apps.common.models import BaseModel
 
 
-class User(BaseModel ,AbstractBaseUser):
+class User(BaseModel, AbstractBaseUser):
     class AuthStep(models.TextChoices):
         FIRST_STEP = "first step", "first step"
         SECOND_STEP = "second step", "second step"
@@ -19,7 +22,6 @@ class User(BaseModel ,AbstractBaseUser):
     is_active = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     password = models.CharField(max_length=50)
-    confirm_password = models.CharField(max_length=50)
 
     objects = UserManager()
 
@@ -27,7 +29,15 @@ class User(BaseModel ,AbstractBaseUser):
     REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.full_name()
+        return self.email
+
+    def create_verify_code(self, *args):
+        code = "".join([str(random.randint(0, 100) % 10) for i in range(4)])
+        User.objects.create(
+            user_id=self.id,
+            code=code
+        )
+        return code
     
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
@@ -41,4 +51,23 @@ class User(BaseModel ,AbstractBaseUser):
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'
-    
+
+
+EXPIRE_TIME = 2
+
+
+class UserConfirmation(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    code = models.CharField(max_length=4)
+    is_confirmed = models.BooleanField(default=False)
+    expiration_time = models.DateTimeField(null=True)
+
+    def __str__(self):
+        return self.user
+
+    def save(self, *args, **kwargs):
+        if self.code:
+            self.expiration_time = datetime.datetime.now() + datetime.timedelta(EXPIRE_TIME)
+        else:
+            return False
+        super(UserConfirmation, self).save(*args, **kwargs)
