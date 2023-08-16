@@ -2,6 +2,15 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from apps.users.models import User
 # Create your models here.
+class Category(models.Model):
+    category_name = models.CharField(max_length=50)
+
+class Product_Image(models.Model):
+    image = models.ImageField()
+
+class Color(models.Model):
+    color = models.CharField(max_length=30)
+    color_image = models.ForeignKey(Product_Image, on_delete=models.CASCADE)
 
 class Products(models.Model):
     product_name = models.CharField(max_length=200)
@@ -14,15 +23,8 @@ class Products(models.Model):
     like = models.BooleanField(default=False)
 
 
-class Category(models.Model):
-    category_name = models.CharField(max_length=50)
 
-class Product_Image(models.Model):
-    image = models.ImageField()
 
-class Color(models.Model):
-    color = models.CharField(max_length=30)
-    color_image = models.ForeignKey(Product_Image, on_delete=models.CASCADE)
 
 class Savat(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

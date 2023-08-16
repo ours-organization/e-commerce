@@ -31,6 +31,7 @@ FIRST_APPS = [
 SECOND_APPS = [
     'apps.users',
     'apps.common',
+    'apps.product',
 ]
 
 # THIRD_APPS = [
