@@ -30,26 +30,26 @@ class Products(models.Model):
 
     def get_images(self,id):
         image = get_list_or_404(Product_Image, color=id)
+
+
 class Product_Size(models.Model):
-    product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='size')
+    # product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='size')
     size = models.CharField(max_length=10)
 
 
 class Color(models.Model):
-    product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='color')
+    # product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='color')
     color = models.CharField(max_length=30)
 
     def __str__(self):
         return self.color
 
 
-
-
-
-
 class Product_Image(models.Model):
-    color = models.ForeignKey(Color, on_delete=models.CASCADE, related_name='image')
+    product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='productimage')
+    color = models.ForeignKey(Color, on_delete=models.CASCADE, related_name="imagecolor")
     image = models.ImageField(upload_to='images/')
+    size = models.CharField(max_length=10)
 
     def get_image(self, id):
         if self.color==id:
@@ -59,6 +59,7 @@ class Product_Image(models.Model):
 class Savat(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_savat')
     product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='product')
+
 
 class Buy_History(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_buy_history')

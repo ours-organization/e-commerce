@@ -21,7 +21,7 @@ class ProductSearchView(View):
         for product in products:
             colors = product.color.filter(product=product)
             for color in colors:
-                rasmlar = color.image.filter(color=color)
+                rasmlar = color.imagecolor.filter(color=color)
                 for rasm in rasmlar:
                     print(rasm)
                     images.append(rasm)
