@@ -45,44 +45,58 @@
 	<div class="row no-gutters">
 		<aside class="col-md-6">
 <article class="gallery-wrap"> 
-	<div class="img-big-wrap">
-	   <a href="#"><img src="./images/items/12.jpg"></a>
+	<div class="img-big-wrap image-container">
+
+	   <a href="#"><img class="slider-image"  src="{{ image.image.url }}"></a>
+
+
 	</div> <!-- img-big-wrap.// -->
+	<div class="button-container">
+    <button class="btn  btn-primary" onclick="changeImage(-1)">Previous</button>
+    <button class="btn  btn-primary" onclick="changeImage(1)">Next</button>
+  </div>
 	
 </article> <!-- gallery-wrap .end// -->
 		</aside>
 		<main class="col-md-6 border-left">
 <article class="content-body">
 
-<h2 class="title">{{ product.title }}</h2>
-
+<h2 class="title">{{ product.product_name }}</h2>
+<p>{{ product.color.color }}</p>
 <div class="mb-3"> 
-	<var class="price h4">${{ product.prise }}</var> 
+	<var class="price h4">${{ product.price }}</var>
 </div> 
 
-<p>{{ product.description }}</p>
+<p>{{ product.product_info }}</p>
 
 
 <hr>
+
 	<div class="row">
 		<div class="item-option-select">
 			<h6>Choose Color</h6>
-			<div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
-			  <label class="btn btn-light">
-			    <input type="radio" name="radio_color"> Silver
-			  </label>
-			  <label class="btn btn-light">
-			    <input type="radio" name="radio_color" > Gray
-			  </label>
-			  <label class="btn btn-light active">
-			    <input type="radio" name="radio_color checked"> Gold
-			  </label>
-			  <label class="btn btn-light">
-			    <input type="radio" name="radio_color"> Black
-			  </label>
-			</div> 
-		</div>
+{% for color_option in colors %}
+			<div class="btn-group btn-group-sm btn-group-toggle" id="product-container" data-toggle="buttons">
+
+				<a  href="?color={{ color_option.color }}">{{ color_option.color }}</a>
+				  <label class="btn btn-light">
+					   <input type="radio" name="radio_color">{{ color_option.color }}
+				  </label>
+
+			</div>
+{% endfor %}
+
+{% if color_images %}
+
+	{% for image in color_images %}
+		<img src="{{ image.image.url }}" alt="{{ product.product_name }} - {{ image.color.color }} Image">
+	{% endfor %}
+{% else %}
+	<img src="{{ product.product_image.image.url }}" alt="{{ product.product_name }} Image">
+{% endif %}
+</div>
 	</div> <!-- row.// -->
+
 	<div class="row">
 		<div class="item-option-select">
 			<h6>Select Size</h6>

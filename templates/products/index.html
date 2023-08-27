@@ -3,7 +3,6 @@
 
 <title> {% block title %}GreatKart | One of the Biggest Online Shopping Platform{% endblock title %} </title>
 
-
 {% block content %}
 <!-- ========================= SECTION MAIN ========================= -->
 <section class="section-intro padding-y-sm">
@@ -27,23 +26,23 @@
 </header><!-- sect-heading -->
 
 	
-<div class="row">
-	{% for product in products %}
-	<div class="col-md-3">
-		<div class="card card-product-grid">
-			{% if product.productimage.exists %}
-			<a href="{% url 'products:detailPage' product.id %}"  class="img-wrap"> <img src="{{ product.productimage.all.first.image.url }}"> </a>
-			{% else %}
-			<a href="{% static './product-detail.html'%}"  class="img-wrap"> <img src="{% static 'images/items/9.jpg'%}"> </a>
-			{% endif %}
-			<figcaption class="info-wrap">
-				<a href="{% url 'products:detailPage' product.id %}" class="title">{{ product.title }}</a>
-				<div class="price mt-1">${{ product.prise }}</div> <!-- price-wrap.// -->
-			</figcaption>
-		</div>
-	</div> <!-- col.// -->
-	{% endfor %}
-</div> <!-- row.// -->
+<!--<div class="row">-->
+<!--	{% for product in products %}-->
+<!--	<div class="col-md-3">-->
+<!--		<div class="card card-product-grid">-->
+<!--			{% if product.productimage.exists %}-->
+<!--			<a href="#"  class="img-wrap"> <img src="{{ product.productimage.all.first.image.url }}"> </a>-->
+<!--			{% else %}-->
+<!--			<a href="{% static './product-detail.html'%}"  class="img-wrap"> <img src="{% static 'images/items/9.jpg'%}"> </a>-->
+<!--			{% endif %}-->
+<!--			<figcaption class="info-wrap">-->
+<!--				<a href="#" class="title">{{ product.title }}</a>-->
+<!--				<div class="price mt-1">${{ product.prise }}</div> &lt;!&ndash; price-wrap.// &ndash;&gt;-->
+<!--			</figcaption>-->
+<!--		</div>-->
+<!--	</div> &lt;!&ndash; col.// &ndash;&gt;-->
+<!--	{% endfor %}-->
+<!--</div> &lt;!&ndash; row.// &ndash;&gt;-->
 
 </div><!-- container // -->
 </section>

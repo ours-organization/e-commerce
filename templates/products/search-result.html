@@ -5,7 +5,9 @@
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg">
 <div class="container">
-	<h2 class="title-page">"{{ category.name }}" bo'yicha saralandi</h2>
+	{% for category in products %}
+	<h2 class="title-page">{{ category.category }} bo'yicha saralandi</h2>
+	{% endfor %}
 </div> <!-- container //  -->
 </section>
 <!-- ========================= SECTION INTRO END// ========================= -->
@@ -30,7 +32,7 @@
 				
 				<ul class="list-menu">
 				{% for category in categories %}
-				<li><a href="#">{{ category.name }}</a></li>
+				<li><a href="#">{{ category }}</a></li>
 				{% endfor %}
 				</ul>
 
@@ -124,19 +126,22 @@
 </header><!-- sect-heading -->
 
 <div class="row">
-	{% for product in products %}
+	{% for image in images %}
+	{% for product in products%}
 	<div class="col-md-4">
 		<figure class="card card-product-grid">
-			<div class="img-wrap"> 
-				
-				<img src="{{ product.productimage.all.first.image.url }}">
-				
+			<div class="img-wrap image-container">
+				<a href="{% url 'products:detailPage' product.id %} ">
+					<img  src="{{ image.image.url }}">
+				</a>
+
+
 			</div> <!-- img-wrap.// -->
 			<figcaption class="info-wrap">
 				<div class="fix-height">
-					<a href="{% url 'products:detailPage' product.id %}" class="title">{{ product.title }}</a>
+					<a href="#" class="title">{{ product.title }}</a>
 					<div class="price-wrap mt-2">
-						<span class="price">${{ product.prise }}</span>
+						<span class="price">${{ product.price }}</span>
 						<del class="price-old">$1980</del>
 					</div> <!-- price-wrap.// -->
 				</div>
@@ -145,6 +150,7 @@
 			<p>{{ product.category }}</p>
 		</figure>
 	</div> <!-- col.// -->
+	{% endfor %}
 	{% endfor %}
 </div> <!-- row end.// -->
 
