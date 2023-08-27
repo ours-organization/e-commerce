@@ -31,9 +31,9 @@ class User(BaseModel, AbstractBaseUser):
     def __str__(self):
         return self.email
 
-    def create_verify_code(self, *args):
+    def create_verify_code(self, *args, **kwargs):
         code = "".join([str(random.randint(0, 100) % 10) for i in range(4)])
-        User.objects.create(
+        UserConfirmation.objects.create(
             user_id=self.id,
             code=code
         )
@@ -57,7 +57,7 @@ EXPIRE_TIME = 2
 
 
 class UserConfirmation(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='code_verifies')
     code = models.CharField(max_length=4)
     is_confirmed = models.BooleanField(default=False)
     expiration_time = models.DateTimeField(null=True)

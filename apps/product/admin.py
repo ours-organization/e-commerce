@@ -5,7 +5,7 @@ from .models import Products,Product_Image,Color,Category,Savat,Buy_History, Pro
 
 class ProductImageInline(admin.TabularInline):
     model = Product_Image
-\
+
 
 class ProductAmin(admin.ModelAdmin):
     inlines = [ProductImageInline]
