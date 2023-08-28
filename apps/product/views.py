@@ -36,24 +36,39 @@ class ProductSearchView(View):
 
         return render(request, 'products/search-result.html', context)
 
+
 class ProductDetailView(View):
-    def get(self, request, id):
-        product = get_object_or_404(Products, pk=id)
+    template_name = 'products/test.html'
+
+    def get(self, request, id, *args, **kwargs):
+        product = Products.objects.get(pk=id)
         colors = Color.objects.filter(product=product)
-        selected_color = request.GET.get('color')
+        selected_color = request.GET.get('color', colors.first())
 
-        if selected_color:
-            color_images = Product_Image.objects.filter(color__color=selected_color)
-        else:
-            color_images = Product_Image.objects.filter(color__product=product).first()
-
+        images = Product_Image.objects.all().filter(color=selected_color)
+        print(images)
         context = {
             'product': product,
             'colors': colors,
-            'color_images': color_images,
             'selected_color': selected_color,
+            'images': images,
         }
-        return render(request, 'products/product-detail.html', context)
+
+        return render(request, self.template_name, context)
+# def product_detail(request, id):
+#     product = Products.objects.get(pk=id)
+#     colors = Color.objects.filter(product=product)
+#     selected_color = request.GET.get('color', colors.first())
+#
+#     images = Product_Image.objects.filter(color=selected_color)
+#
+#     context = {
+#         'product': product,
+#         'colors': colors,
+#         'selected_color': selected_color,
+#         'images': images,
+#     }
+#     return render(request, 'products/product-detail.html', context)
         # search_query = request.GET.get('q', '')
         # page_size = request.GET.get('page_size', 2)
         #
@@ -88,7 +103,7 @@ class ProductDetailView(View):
         #      }
         # )
         # # return render(request, 'products/product-detail.html', context)
-    def post(self, request):
-        pass
+    # def post(self, request):
+    #     pass
 
 
