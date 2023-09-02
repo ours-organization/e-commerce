@@ -20,9 +20,9 @@
         <ul class="navbar-nav">
             <li><a href="{% static '#'%}" class="nav-link"> <i class="fa fa-envelope"></i> Email </a></li>
             <li><a href="{% static '#'%}" class="nav-link"> <i class="fa fa-phone"></i> Call us </a></li>
-        </ul> <!-- list-inline //  -->
-      </div> <!-- navbar-collapse .// -->
-    </div> <!-- container //  -->
+        </ul> 
+      </div> 
+    </div> 
     </nav>
 
     <section class="header-main border-bottom">
@@ -31,7 +31,7 @@
         <div class="col-lg-2 col-md-3 col-6">
             <a href="{% url 'products:indexPage'%}" class="brand-wrap">
                 <img class="logo" src="{% static './images/logo.png'%}">
-            </a> <!-- brand-wrap.// -->
+            </a> 
         </div>
         <div class="col-lg col-sm col-md col-6 flex-grow-0">
             <div class="category-wrap dropdown d-inline-block float-right">
@@ -46,8 +46,8 @@
 
 			</div>
 
-            </div>  <!-- category-wrap.// -->
-        </div> <!-- col.// -->
+            </div> 
+        </div> 
         <a href="{% static './store.html'%}" class="btn btn-outline-primary">Store</a>
         <div class="col-lg  col-md-6 col-sm-12 col">
             <form action="#" class="search">
@@ -60,26 +60,31 @@
                       </button>
                     </div>
                 </div>
-            </form> <!-- search-wrap .end// -->
-        </div> <!-- col.// -->
+            </form>
         <div class="col-lg-3 col-sm-6 col-8 order-2 order-lg-3">
                     <div class="d-flex justify-content-end mb-3 mb-lg-0">
                         <div class="widget-header">
                             <small class="title text-muted">Welcome guest!</small>
                             <div>
-                                <a href="{% static 'signin.html'%}">Sign in</a> <span class="dark-transp"> | </span>
-                                <a href="{% static 'register.html'%}"> Register</a>
+                                {% if request.user.is_authenticated %}
+                                <a href="{% static 'signin.html'%}">{{ request.user.first_name}}</a> <span class="dark-transp"> | </span>
+                                <a href="{% url 'users:logout' %}">Log out</a> <span class="dark-transp"> | </span>
+
+                                {% else %}
+                                <a href="{% url 'users:register'%}">Register</a> <span class="dark-transp"> | </span>
+                                <a href="{% url 'users:login'%}"> Log in</a>
+                                {% endif %}
                             </div>
                         </div>
                         <a href="{% static 'cart.html'%}" class="widget-header pl-3 ml-3">
                             <div class="icon icon-sm rounded-circle border"><i class="fa fa-shopping-cart"></i></div>
                             <span class="badge badge-pill badge-danger notify">0</span>
                         </a>
-                    </div> <!-- widgets-wrap.// -->
-                </div> <!-- col.// -->
-    </div> <!-- row.// -->
-        </div> <!-- container.// -->
-    </section> <!-- header-main .// -->
+                    </div> 
+                </div> 
+    </div> 
+        </div> 
+    </section> 
 
 </header>
 {% endblock content %}

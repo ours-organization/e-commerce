@@ -1,43 +1,23 @@
-import re
-import threading
-
 from django.core.mail import EmailMessage
-from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 from django.template.loader import render_to_string
 
 
-class EmailThread(threading.Thread):
-    def __init__(self, email):
-        self.email = email
-        threading.Thread.__init__(self)
-
-    def run(self):
-        self.email.send()
-
-
-class Email:
-    @staticmethod
-    def send_email(data):
-        email = EmailMessage(
-            subject=data['subject'],
-            body=data['body'],
-            to=[data['to_email']]
-        )
-        if data.get('content_type') == 'html':
-            email.content_subtype = 'html'
-        EmailThread(email).start()
-
-
-def send_mail(email, code):
-    html_content = render_to_string(
-        "email/authentication/activate_account.html",
-        {"code": code}
-    )
-    Email.send_email(
-        {
-            'subject': "ro'yxatdan o'tish",
-            'to_email': email,
-            'body': html_content,
-            'context_type': "html"
+def send_email(user, code, to_email):
+    email_subject = "User tasdiqlash kodi emailingizga yuborildi"
+    message = render_to_string('email/authentication/activate_account.html', {
+            'user': user,
+            'code': code,
+            'uid': urlsafe_base64_encode(force_bytes(user.id))
         }
     )
+    email = EmailMessage(email_subject, message, to=[to_email])
+    email.send()
+
+def send_reset_email(to_email, reset_link):
+    subject= "sizning tasdiqlash havolangiz"
+    message = f"link ustiga bosib o'zingizni tasdqlang va parolingizni o'zgartirng: \n{reset_link}"
+
+    email = EmailMessage(subject, message, to=[to_email])
+    email.send()

@@ -21,7 +21,7 @@ class User(BaseModel, AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-    password = models.CharField(max_length=50)
+    password = models.CharField(max_length=128)
 
     objects = UserManager()
 
@@ -31,13 +31,18 @@ class User(BaseModel, AbstractBaseUser):
     def __str__(self):
         return self.email
 
-    def create_verify_code(self, *args, **kwargs):
+    def create_verify_code(self):
         code = "".join([str(random.randint(0, 100) % 10) for i in range(4)])
         UserConfirmation.objects.create(
             user_id=self.id,
             code=code
         )
         return code
+    
+    def check_email(self):
+        if self.email:
+            normalize_email = self.email.lower()
+            self.email = normalize_email
     
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
@@ -48,6 +53,10 @@ class User(BaseModel, AbstractBaseUser):
     def has_module_perms(self, app_label):
         return True
     
+    def save(self, *args, **kwargs):
+        self.check_email()
+        super(User, self).save(*args, **kwargs)
+    
     class Meta:
         verbose_name = 'User'
         verbose_name_plural = 'Users'
@@ -57,13 +66,13 @@ EXPIRE_TIME = 2
 
 
 class UserConfirmation(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='code_verifies')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='verify_codes')
     code = models.CharField(max_length=4)
     is_confirmed = models.BooleanField(default=False)
     expiration_time = models.DateTimeField(null=True)
 
     def __str__(self):
-        return self.user
+        return f'{self.user.full_name} | {self.user.email}'
 
     def save(self, *args, **kwargs):
         if self.code:

@@ -1,8 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from .models import User
-from apps.common.utility import send_mail
+from .models import User, UserConfirmation
 
 
 class RegisterForm(forms.ModelForm):
@@ -12,7 +11,7 @@ class RegisterForm(forms.ModelForm):
         fields = ['first_name', 'last_name', 'email', 'password', 'confirm_password']
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
+        email = self.cleaned_data.get('email').lower()
 
         if email is None:
             raise ValidationError("maydon bo'sh bo'lishi mumkin emas")
@@ -42,15 +41,72 @@ class RegisterForm(forms.ModelForm):
             password=self.cleaned_data['password'],
         )
         user.set_password(self.cleaned_data.get('password'))
-
-        if user.email:
-            code = user.create_verify_code(user.email)
-            print('code ', code)
-            send_mail(user.email, code)
         return user
 
 
 class CodeVerifyForm(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ['email']
+        model = UserConfirmation
+        fields = ['code']
+
+    
+class LoginForm(forms.Form):
+    email = forms.EmailField(required=True)
+    password = forms.CharField()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        print('login email ', cleaned_data)
+
+        email = cleaned_data.get('email', None)
+        password = cleaned_data.get('password', None)
+        if email is None:
+            raise ValidationError('email maydoni bo\'sh bo\'lishi mumkin emas')
+        if email and not User.objects.filter(email=email).exists():
+            raise ValidationError("bunday email va parolga ega foydalanuvchi topilmadi")
+        
+        if password is None:
+            raise ValidationError('password maydoni bo\'sh bo\'lishi mumkin emas')
+        
+        try:
+            user = User.objects.get(email=email)
+            if not user.check_password(password):
+                raise ValidationError("password xato")
+        except User.DoesNotExist:
+            raise ValidationError('bunday user mavjud emas')
+        
+        return cleaned_data
+    
+
+class ForgotPasswordForm(forms.Form):
+    email = forms.EmailField()
+
+    def clean(self):
+        email = self.cleaned_data['email']
+
+        if email is None:
+            raise ValidationError("email maydoni bo'sh")
+        if email and not User.objects.filter(email=email).exists():
+            raise ValidationError('bunday emailli user mavjud emas')
+        return email
+    
+
+class ResetPasswordForm(forms.Form):
+    password = forms.CharField()
+    confirm_password = forms.CharField()
+
+    def clean(self):
+        password = self.cleaned_data['password']
+        confirm_password = self.cleaned_data['confirm_password']
+
+        if password is None:
+            raise ValidationError("password maydoni bo'sh")
+        if password != confirm_password:
+            raise ValidationError("passwordlar bir xil emas")
+        if len(password) < 8:
+            raise ValidationError("passwordlar kamida 8 ta belgidan kam bo'lmasligi kerak")
+        if password.isdigit():
+            raise ValidationError("password to'liq raqamlardan iborat bo'lmasligi kerak")
+        
+        return self.cleaned_data
+    

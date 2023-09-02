@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+<!DOCTYPE HTML>
+{% load static %}
+
+{% block title %}Logout{% endblock title %}
+
+{% block content %}
+<section class="section-content padding-y">
+
+	<div class="card mx-auto" style="max-width:520px; margin-top:40px;">
+      <article class="card-body">
+		<header class="mb-4"><h4 class="card-title">Log Out</h4></header>
+		<form method="post">{% csrf_token %}
+            <h3>Log out qilmoqchimisiz?</h3>
+            <button type="submit">ha</button> <button><a href="{% url 'users:home' %}">yo'q</a></button>
+        </form>
+		</article>
+    </div> 
+    <p class="text-center mt-4">Have an account? <a href="">Log In</a></p>
+    <br><br>
+
+</section>
+{% endblock %}
+
+    
