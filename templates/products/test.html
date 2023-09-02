@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.product_name }}</title>
+</head>
+<body>
+    <h1>{{ product.product_name }}</h1>
+    <p>{{ product.product_title }}</p>
+    <p>Price: ${{ product.price }}</p>
+    <p>{{ product.product_info }}</p>
+
+    <h2>Available Colors:</h2>
+    <ul>
+        {% for color in colors %}
+            <li>
+                <a href="?color={{ color.id }}" {% if color.id == selected_color.id %}class="selected"{% endif %}>{{ color.color }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Images:</h2>
+    <div>
+        {% for image in images %}
+<!--        <img src="{{ image.image.url }}" alt="image" class="visible">-->
+            <img src="{{ image.image.url }}" alt="{{ product.product_name }} - {{ selected_color.color }}" class="visible">
+        {% endfor %}
+    </div>
+
+    <style>
+        img {
+            display: none;
+        }
+        .visible {
+            display: block;
+        }
+    </style>
+</body>
+</html>
