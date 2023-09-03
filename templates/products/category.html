@@ -31,12 +31,12 @@
 	<div class="col-md-3">
 		<div class="card card-product-grid">
 			{% if product.productimage.exists %}
-			<a href="{% url 'products:detailPage' product.id %}"  class="img-wrap"> <img src="{{ product.productimage.all.first.image.url }}"> </a>
+			<a href="#"  class="img-wrap"> <img src="{{ product.productimage.all.first.image.url }}"> </a>
 			{% else %}
-			<a href="{% static './product-detail.html'%}"  class="img-wrap"> <img src="{% static 'images/items/9.jpg'%}"> </a>
+			<a href=  class="img-wrap"> <img src=""> </a>
 			{% endif %}
 			<figcaption class="info-wrap">
-				<a href="#" class="title">{{ product.name }}</a>
+				<a href="#" class="title">{{ product.product_name }}</a>
 				<div class="price mt-1">$ {{ product.price }}</div>
 				<div class="price mt-1">category: {{ product.category }}</div>
 			</figcaption>

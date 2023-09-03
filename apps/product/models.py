@@ -8,21 +8,19 @@ from django.shortcuts import render, get_object_or_404,get_list_or_404
 class Category(models.Model):
     name = models.CharField(max_length=50)
 
-
     def __str__(self):
         return self.name
 
 
 class Products(models.Model):
-    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='category')
-    product_name = models.CharField(max_length=200)
-    product_title = models.TextField()
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
+    name = models.CharField(max_length=200)
     price = models.IntegerField()
-    product_info = models.TextField()
+    info = models.TextField()
     like = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.product_name
+        return self.name
 
     def get_image(self):
         image = Product_Image.objects.filter(color=self.pk)
@@ -30,10 +28,10 @@ class Products(models.Model):
 
     def get_images(self,id):
         image = get_list_or_404(Product_Image, color=id)
+        return image
 
 
 class Product_Size(models.Model):
-    # product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='size')
     size = models.CharField(max_length=10)
 
 
@@ -50,6 +48,11 @@ class Product_Image(models.Model):
     color = models.ForeignKey(Color, on_delete=models.CASCADE, related_name="imagecolor")
     image = models.ImageField(upload_to='images/')
     size = models.CharField(max_length=10)
+    is_default = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.product.name
+
 
     def get_image(self, id):
         if self.color==id:

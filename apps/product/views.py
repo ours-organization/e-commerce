@@ -3,58 +3,85 @@ from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.views import View
 from .models import Category, Products, Color, Product_Image
 
+def for_all_pages(request):
+    categories = Category.objects.all()
+    return {'categories': categories}
 
-# Create your views here.
+
 class HomePageView(View):
     def get(self,request):
         products = Products.objects.all()
         context = {
             'products': products,
         }
-        return render(request, 'base.html', context)
+        return render(request, 'products/index.html', context)
 
-class ProductSearchView(View):
-    def get(self, request, category):
-        id = Category.objects.get(pk=category)
-        products = Products.objects.filter(category=id)
-        images = []
-        for product in products:
-            colors = product.color.filter(product=product)
-            for color in colors:
-                rasmlar = color.imagecolor.filter(color=color)
-                for rasm in rasmlar:
-                    print(rasm)
-                    images.append(rasm)
-        # for product in products:
-        #     img = product.get_image()
-        #     images.append(img)
 
-        context ={
-            'products':products,
-            'images':images,
-        }
+class CategoryView(View):
+    def get(self, request, category_name):
+        category =get_object_or_404(Category, name=category_name)
+        products = Products.objects.filter(category=category)
 
-        return render(request, 'products/search-result.html', context)
+        filtr = self.request.GET.get('filtr', None)
+        if filtr:
+            products = products.filter(product_name__icontains=filtr)
+        return render(request, 'products/category.html', {'category': category, 'products': products})
 
+    def post(self, request):
+        return render(request, 'products/category.html', {})
+
+
+        #   agar keraksiz kod deb xisoblasez o'ziz o'chirvorasz aka)
+
+# class ProductSearchView(View):
+#     def get(self, request, category):
+#         id = Category.objects.get(pk=category)
+#         products = Products.objects.filter(category=id)
+#         images = []
+#         for product in products:
+#             colors = product.color.filter(product=product)
+#             for color in colors:
+#                 rasmlar = color.imagecolor.filter(color=color)
+#                 for rasm in rasmlar:
+#                     print(rasm)
+#                     images.append(rasm)
+#         # for product in products:
+#         #     img = product.get_image()
+#         #     images.append(img)
+
+#         context = {
+#             'products':products,
+#             'images':images,
+#         }
+
+#         return render(request, 'products/search-result.html', context)
+    
 
 class ProductDetailView(View):
-    template_name = 'products/test.html'
+    def get(self, request, pk):
+        product = Products.objects.get(id=pk)
 
-    def get(self, request, id, *args, **kwargs):
-        product = Products.objects.get(pk=id)
-        colors = Color.objects.filter(product=product)
-        selected_color = request.GET.get('color', colors.first())
+        return render(request, 'products/test.html', {'product': product})
 
-        images = Product_Image.objects.all().filter(color=selected_color)
-        print(images)
-        context = {
-            'product': product,
-            'colors': colors,
-            'selected_color': selected_color,
-            'images': images,
-        }
 
-        return render(request, self.template_name, context)
+# class ProductDetailView(View):
+#     template_name = 'products/test.html'
+
+#     def get(self, request, id, *args, **kwargs):
+#         product = Products.objects.get(pk=id)
+#         colors = Color.objects.filter(product=product)
+#         selected_color = request.GET.get('color', colors.first())
+
+#         images = Product_Image.objects.all().filter(color=selected_color)
+#         print(images)
+#         context = {
+#             'product': product,
+#             'colors': colors,
+#             'selected_color': selected_color,
+#             'images': images,
+#         }
+#         return render(request, self.template_name, context)
+
 # def product_detail(request, id):
 #     product = Products.objects.get(pk=id)
 #     colors = Color.objects.filter(product=product)
