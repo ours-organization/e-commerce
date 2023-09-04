@@ -1,7 +1,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from django.views import View
-from .models import Category, Products, Color, Product_Image
+from .models import Category, Products, Color, Product_Image, Savat, Product_Size
 
 
 # Create your views here.
@@ -38,72 +38,57 @@ class ProductSearchView(View):
 
 
 class ProductDetailView(View):
-    template_name = 'products/test.html'
+    template_name = 'products/product-detail.html'
 
     def get(self, request, id, *args, **kwargs):
         product = Products.objects.get(pk=id)
         colors = Color.objects.filter(product=product)
-        selected_color = request.GET.get('color', colors.first())
+        selected_color = request.GET.get('color', '')
 
-        images = Product_Image.objects.all().filter(color=selected_color)
-        print(images)
+
+        sizes = product.size.all()
+        if selected_color:
+            images = Product_Image.objects.all().filter(color=selected_color)
+            selected_color = int(selected_color)
+        else:
+            images = Product_Image.objects.all().filter(color=product.id)
+
+
         context = {
             'product': product,
             'colors': colors,
             'selected_color': selected_color,
             'images': images,
+            'sizes': sizes
         }
 
         return render(request, self.template_name, context)
-# def product_detail(request, id):
-#     product = Products.objects.get(pk=id)
-#     colors = Color.objects.filter(product=product)
-#     selected_color = request.GET.get('color', colors.first())
-#
-#     images = Product_Image.objects.filter(color=selected_color)
-#
-#     context = {
-#         'product': product,
-#         'colors': colors,
-#         'selected_color': selected_color,
-#         'images': images,
-#     }
-#     return render(request, 'products/product-detail.html', context)
-        # search_query = request.GET.get('q', '')
-        # page_size = request.GET.get('page_size', 2)
-        #
-        # products = get_list_or_404(Products, pk=id)
-        # images = []
-        # rang = []
-        # for product in products:
-        #     colors = product.color.all()
-        #     rang.append(colors)
-        #     print(colors)
-        #     for color in colors:
-        #         rasmlar = color.image.filter(color=color)
-        #         for rasm in rasmlar:
-        #             print(rasm)
-        #             images.append(rasm)
-        #
-        # for color in rang:
-        #     print(color)
-        # context = {
-        #     'products': products,
-        #     'colors': rang,
-        #     'images':images
-        # }
-        # paginator = Paginator(context, page_size)
-        # print(context)
-        # page_num = request.GET.get('page', 1)
-        # page_obj = paginator.get_page(page_num)
-        # return render(
-        #     request,
-        #     "books/list.html",
-        #     {"page_obj": page_obj,
-        #      }
-        # )
-        # # return render(request, 'products/product-detail.html', context)
-    # def post(self, request):
-    #     pass
+    def post(self, request, id):
+        radio_color = request.POST['color']
+        # size = request.POST['size']
+        print(request.POST)
+        product = Products.objects.get(pk=id)
+        colors = Color.objects.filter(product=product)
+        selected_color = request.GET.get('color', '')
+
+        sizes = product.size.all()
+        return render(request, 'products/test2.html')
 
 
+def AddToCart(request,id, color):
+    if request.method == 'POST':
+        size = request.POST['size']
+        product = Products.objects.get(pk=id)
+
+        razmer = Product_Size.objects.get(pk=size)
+        rangi = Color.objects.get(pk=color)
+        all = Savat.objects.create(
+            user=request.user,
+            product=product,
+            color=rangi,
+            size=razmer
+
+        )
+        all.save()
+        print(f'color:{color}, size:{size}, product:{product}')
+        return render(request, 'products/test2.html')

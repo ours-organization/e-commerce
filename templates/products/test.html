@@ -4,6 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ product.product_name }}</title>
+    <style>
+        img {
+            display: none;
+        }
+        .visible {
+            display: block;
+        }
+
+    .image-container {
+      display: flex;
+      overflow: hidden;
+    }
+
+    .image-container img {
+      display: none;
+      width: 100%;
+      height: auto;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
     <h1>{{ product.product_name }}</h1>
@@ -23,18 +48,39 @@
     <h2>Images:</h2>
     <div>
         {% for image in images %}
-<!--        <img src="{{ image.image.url }}" alt="image" class="visible">-->
-            <img src="{{ image.image.url }}" alt="{{ product.product_name }} - {{ selected_color.color }}" class="visible">
+        <div class="image-container">
+            <img src="{{ image.image.url }}" alt="{{ product.product_name }} - {{ selected_color.color }}" class="slider-image">
+        </div>
         {% endfor %}
+        <div class="button-container">
+            <button onclick="changeImage(-1)">orqaga</button>
+            <button onclick="changeImage(11)">oldinga</button>
+        </div>
     </div>
 
-    <style>
-        img {
-            display: none;
+<script>
+    let currentImageIndex = 0;
+    const images = document.querySelectorAll('.slider-image');
+    images[currentImageIndex].style.display = 'block';
+
+    function changeImage(direction) {
+      images[currentImageIndex].style.display = 'none';
+      currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
+      images[currentImageIndex].style.display = 'block';
+    }
+
+   const radioOption = document.getElementById("radioOption");
+        const destinationInput = document.getElementById("destination");
+
+        // Add event listener to radio input
+        radioOption.addEventListener("change", transferValue);
+
+        // Function to transfer selected value
+        function transferValue() {
+            if (radioOption.checked) {
+                destinationInput.value = radioOption.value;
+            }
         }
-        .visible {
-            display: block;
-        }
-    </style>
+  </script>
 </body>
 </html>

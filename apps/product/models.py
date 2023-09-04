@@ -34,6 +34,8 @@ class Product_Size(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='size')
     size = models.CharField(max_length=10)
 
+    def __str__(self):
+        return self.size
 
 class Color(models.Model):
     product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='color')
@@ -59,6 +61,8 @@ class Product_Image(models.Model):
 class Savat(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_savat')
     product = models.ForeignKey(Products, on_delete=models.CASCADE, related_name='product')
+    color = models.ForeignKey(Color, on_delete=models.CASCADE, related_name='product_color')
+    size = models.ForeignKey(Product_Size, on_delete=models.CASCADE, related_name='product_size')
 
 class Buy_History(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_buy_history')
